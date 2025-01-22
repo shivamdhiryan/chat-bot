@@ -3,7 +3,9 @@ const app = express();
 const http = require('http');
 const path = require('path');
 const { Server } = require('socket.io');
+require('dotenv').config();
 const server = http.createServer(app);
+
 
 const PORT = process.env.PORT || 4999
 
