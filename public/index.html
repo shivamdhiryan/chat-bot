@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="whatsapp">
+        <img src="https://cdn4.iconfinder.com/data/icons/social-media-logos-6/512/13-whatsapp-512.png" alt="">
+    </div>
+    <h1>Welcom to iDiscuss Chat App</h1>
+    <div class="whatsapp-chat">
+        <div class="message-box">
+            <!-- <div class="message right">hey how are you ?</div>
+            <div class="message left"> Rohan I am fine . How about you ?</div> -->
+        </div>
+    </div>
+    <div class="send">
+        <form action="#" id="sendform">
+            <input type="text" placeholder="Enter the message" id="messageInp" name="messageInp">
+            <button class="btn" type="submit">Send</button>
+        </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const form = document.getElementById('sendform');
+        const messageInp = document.getElementById('messageInp');
+        const messageContainer = document.querySelector('.whatsapp-chat .message-box');
+        const appendFunc = (message, position) => {
+            const messageElement = document.createElement('div');
+            messageElement.innerText = message;
+            messageElement.classList.add('message')
+            messageElement.classList.add(position);
+            messageContainer.append(messageElement);
+        }
+        const name = prompt('Enter your name to join');
+        socket.emit('new-user-joined', name);
+        socket.on('user-joined', (name) => {
+            appendFunc(`${name} joined the chat`, 'right');
+        })
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = messageInp.value;
+            appendFunc(`You : ${message}`, 'right');
+            socket.emit('send', message);
+            messageInp.value = ''
+        })
+        socket.on('receive', (message) => {
+            appendFunc(`${message.name} : ${message.message}`, 'left')
+        })
+        socket.on('left', name => {
+            appendFunc(`${name} left the chat`, 'left');
+        })
+    </script>
+</body>
+
+</html>
