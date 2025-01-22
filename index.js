@@ -5,12 +5,13 @@ const path = require('path');
 const { Server } = require('socket.io');
 const server = http.createServer(app);
 
-app.use(express.static(path.resolve('public')));
+const PORT = process.env.PORT || 4999
+
+const io = new Server(server);
+app.use(express.static(path.join(__dirname,'public')))
 app.get('/', (req, res) => {
     res.sendFile('index.html');
 })
-
-const io = new Server(server);
 const users = {};
 io.on('connection', (socket) => {
     console.log('a user connected');
@@ -28,7 +29,6 @@ io.on('connection', (socket) => {
     })
 });
 
-const port = 3000;
-server.listen(3000, () => {
-    console.log('server running at http://localhost:3000');
+server.listen(PORT, () => {
+    console.log('server running at http://localhost:4999');
 });
